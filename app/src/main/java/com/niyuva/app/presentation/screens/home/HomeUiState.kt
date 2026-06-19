@@ -13,12 +13,12 @@ import java.time.LocalDate
 data class HomeUiState(
     val isLoading: Boolean = true,
     val userName: String = "",
-    val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
+    val currentPhase: CyclePhase = CyclePhase.MENSTRUATION,
     val currentDayInCycle: Int = 1,
     val dayInPhase: Int = 1,
     val totalCycleDays: Int = 28,
     /** Resolved from CyclePhase via PhaseThemeData.fromPhase() — drives all theming. */
-    val phaseTheme: PhaseThemeData = PhaseThemeData.FOLLICULAR,
+    val phaseTheme: PhaseThemeData = PhaseThemeData.MENSTRUATION,
     val prediction: CyclePrediction? = null,
     val todayLog: DailyLog? = null,
     val hasLoggedToday: Boolean = false,

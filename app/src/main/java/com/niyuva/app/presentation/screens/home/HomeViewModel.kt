@@ -432,7 +432,9 @@ class HomeViewModel @Inject constructor(
         }
 
         // 3. Theme resolution — pure data, no UI imports
-        val phaseTheme = PhaseThemeData.fromPhase(phase)
+        // ORIGINAL LOGIC (color changes according to cycle day):
+        // val phaseTheme = PhaseThemeData.fromPhase(phase)
+        val phaseTheme = PhaseThemeData.fromPhase(CyclePhase.MENSTRUATION)
 
         // 4. Prediction (non-fatal: catch and surface inline)
         val prediction = runCatching {
