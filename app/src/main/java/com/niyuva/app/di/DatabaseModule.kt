@@ -24,8 +24,6 @@ object DatabaseModule {
     ): NiyuvaDatabase {
         val passphrase = keyManager.getDatabasePassphrase()
         val factory = SupportFactory(passphrase)
-        // SECURITY FIX: Clear key from memory immediately after passing to factory
-        passphrase.fill(0)
         return Room.databaseBuilder(
             context,
             NiyuvaDatabase::class.java,
