@@ -1,9 +1,10 @@
 package com.niyuva.app.domain.usecase
 
-import com.niyuva.app.domain.model.AiProvider
 import com.niyuva.app.domain.model.UserProfile
 import com.niyuva.app.domain.repository.UserProfileRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import at.favre.lib.crypto.bcrypt.BCrypt
 import javax.inject.Inject
 
@@ -36,7 +37,8 @@ class UpdateAgeUseCase @Inject constructor(
 class SetPinUseCase @Inject constructor(
     private val repository: UserProfileRepository
 ) {
-    suspend operator fun invoke(pin: String) {
+    suspend operator fun invoke(pin: String) = withContext(Dispatchers.IO) {
+        // SECURITY FIX: Wrap high-cost KDF hashing in Dispatchers.IO to protect Main thread
         val pinHash = BCrypt.withDefaults().hashToString(12, pin.toCharArray())
         repository.updatePinHash(pinHash)
     }
@@ -45,17 +47,19 @@ class SetPinUseCase @Inject constructor(
 class VerifyPinUseCase @Inject constructor(
     private val repository: UserProfileRepository
 ) {
-    suspend operator fun invoke(pin: String): Boolean {
+    suspend operator fun invoke(pin: String): Boolean = withContext(Dispatchers.IO) {
         val profile = repository.getProfile()
-        val pinHash = profile?.pinHash ?: return false
-        return BCrypt.verifyer().verify(pin.toCharArray(), pinHash).verified
+        val pinHash = profile?.pinHash ?: return@withContext false
+        // SECURITY FIX: Wrap verification in Dispatchers.IO to protect Main thread
+        BCrypt.verifyer().verify(pin.toCharArray(), pinHash).verified
     }
 }
 
 class SetSecurityQuestionUseCase @Inject constructor(
     private val repository: UserProfileRepository
 ) {
-    suspend operator fun invoke(question: String, answer: String) {
+    suspend operator fun invoke(question: String, answer: String) = withContext(Dispatchers.IO) {
+        // SECURITY FIX: Wrap security answer KDF hashing in Dispatchers.IO to protect Main thread
         val answerHash = BCrypt.withDefaults().hashToString(12, answer.trim().lowercase().toCharArray())
         repository.updateSecurityQuestion(question, answerHash)
     }
@@ -64,20 +68,14 @@ class SetSecurityQuestionUseCase @Inject constructor(
 class ForgotPinVerifyAnswerUseCase @Inject constructor(
     private val repository: UserProfileRepository
 ) {
-    suspend operator fun invoke(answer: String): Boolean {
+    suspend operator fun invoke(answer: String): Boolean = withContext(Dispatchers.IO) {
         val profile = repository.getProfile()
-        val answerHash = profile?.securityAnswerHash ?: return false
-        return BCrypt.verifyer().verify(answer.trim().lowercase().toCharArray(), answerHash).verified
+        val answerHash = profile?.securityAnswerHash ?: return@withContext false
+        // SECURITY FIX: Wrap verification in Dispatchers.IO to protect Main thread
+        BCrypt.verifyer().verify(answer.trim().lowercase().toCharArray(), answerHash).verified
     }
 }
 
-class UpdateAiSettingsUseCase @Inject constructor(
-    private val repository: UserProfileRepository
-) {
-    suspend operator fun invoke(enabled: Boolean, provider: AiProvider?) {
-        repository.updateAiSettings(enabled, provider)
-    }
-}
 
 class MarkOnboardingCompleteUseCase @Inject constructor(
     private val repository: UserProfileRepository

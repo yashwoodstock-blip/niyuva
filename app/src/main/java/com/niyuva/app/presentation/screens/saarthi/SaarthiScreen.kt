@@ -22,17 +22,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -50,13 +45,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -74,7 +69,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.niyuva.app.presentation.navigation.NavRoutes
 import com.niyuva.app.domain.model.ChatMessage
-import com.niyuva.app.domain.model.ChatRole
 import com.niyuva.app.presentation.theme.BlushMist
 import com.niyuva.app.presentation.theme.CyclePhase
 import com.niyuva.app.presentation.theme.DeepPlumRose
@@ -380,14 +374,14 @@ private fun SaarthiChatView(
 ) {
     val listState = rememberLazyListState()
     val groupedItems = remember(messages) { groupMessagesByDate(messages) }
-    val lastVisibleItemIndex = remember { derivedStateOf { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 } }
     // Track if first layout scroll has occurred — snap instantly on first load
     var initialScrollDone by remember { mutableStateOf(false) }
 
     LaunchedEffect(groupedItems.size) {
         if (groupedItems.isNotEmpty()) {
             if (!initialScrollDone) {
-                // Instant snap to bottom on first load
+                // UI FIX: Delay scroll to bottom to ensure items are laid out/measured
+                delay(100)
                 listState.scrollToItem(groupedItems.size - 1)
                 initialScrollDone = true
             } else {

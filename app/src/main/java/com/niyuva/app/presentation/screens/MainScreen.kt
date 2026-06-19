@@ -141,7 +141,10 @@ fun MainScreen(
                         }
                     )
                 ) {
-                    com.niyuva.app.presentation.screens.body.ArticleScreen(navController = navController)
+                    com.niyuva.app.presentation.screens.body.ArticleScreen(
+                        navController = navController,
+                        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                    )
                 }
                 composable(NavRoutes.Saarthi.route) {
                     SaarthiScreen(

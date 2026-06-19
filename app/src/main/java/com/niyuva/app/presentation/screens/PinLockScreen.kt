@@ -46,6 +46,7 @@ fun PinLockScreen(
 
     val profile by viewModel.profile.collectAsStateWithLifecycle()
     val wrongAttempts by viewModel.wrongAttempts.collectAsStateWithLifecycle()
+    val lockoutState by viewModel.lockoutState.collectAsStateWithLifecycle()
 
     var enteredPin by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -60,49 +61,65 @@ fun PinLockScreen(
         // Do nothing - user cannot exit lock screen via back button
     }
 
+    // Clear entered PIN if lockout occurs
+    LaunchedEffect(lockoutState) {
+        if (lockoutState is LockoutState.Locked) {
+            enteredPin = ""
+        }
+    }
+
     // Set subtitle text based on states
-    LaunchedEffect(profile, isError) {
-        if (!isError) {
+    LaunchedEffect(profile, isError, lockoutState) {
+        val state = lockoutState
+        if (state is LockoutState.Locked) {
+            val secondsRemaining = (state.timeRemainingMs / 1000) + 1
+            subtitleText = "Security Lockout — Try again in ${secondsRemaining}s 🔒"
+            isError = true
+        } else if (!isError) {
             val name = profile?.name?.ifBlank { "User" } ?: "User"
             subtitleText = "Namaste, $name! 🌸"
         }
     }
 
     val handleDigitEntered: (Int) -> Unit = { digit ->
-        if (enteredPin.length < 4 && !isError && !isChecking) {
-            enteredPin += digit.toString()
+        if (lockoutState !is LockoutState.Locked) {
+            if (enteredPin.length < 4 && !isError && !isChecking) {
+                enteredPin += digit.toString()
 
-            if (enteredPin.length == 4) {
-                isChecking = true
-                coroutineScope.launch {
-                    delay(300) // Small delay for dot visual feedback
-                    val verified = viewModel.verifyPin(enteredPin)
-                    if (verified) {
-                        isError = false
-                        navController.navigate(NavRoutes.Main.route) {
-                            popUpTo(NavRoutes.PinLock.route) { inclusive = true }
+                if (enteredPin.length == 4) {
+                    isChecking = true
+                    coroutineScope.launch {
+                        delay(300) // Small delay for dot visual feedback
+                        val verified = viewModel.verifyPin(enteredPin)
+                        if (verified) {
+                            isError = false
+                            navController.navigate(NavRoutes.Main.route) {
+                                popUpTo(NavRoutes.PinLock.route) { inclusive = true }
+                            }
+                        } else {
+                            isError = true
+                            subtitleText = "Galat PIN — phir try karo 💛"
+
+                            if (wrongAttempts >= 5) {
+                                showLimitAlert = true
+                            }
+
+                            delay(1500)
+                            enteredPin = ""
+                            isError = false
                         }
-                    } else {
-                        isError = true
-                        subtitleText = "Galat PIN — phir try karo 💛"
-
-                        if (wrongAttempts >= 5) {
-                            showLimitAlert = true
-                        }
-
-                        delay(1500)
-                        enteredPin = ""
-                        isError = false
+                        isChecking = false
                     }
-                    isChecking = false
                 }
             }
         }
     }
 
     val handleBackspace: () -> Unit = {
-        if (enteredPin.isNotEmpty() && !isError && !isChecking) {
-            enteredPin = enteredPin.dropLast(1)
+        if (lockoutState !is LockoutState.Locked) {
+            if (enteredPin.isNotEmpty() && !isError && !isChecking) {
+                enteredPin = enteredPin.dropLast(1)
+            }
         }
     }
 

@@ -17,12 +17,6 @@ class GetLogForDateUseCase @Inject constructor(
     suspend operator fun invoke(date: LocalDate): DailyLog? = repository.getLogForDate(date)
 }
 
-class GetRecentLogsUseCase @Inject constructor(
-    private val repository: DailyLogRepository
-) {
-    suspend operator fun invoke(count: Int): List<DailyLog> = repository.getRecentLogs(count)
-}
-
 class GetLogsInRangeUseCase @Inject constructor(
     private val repository: DailyLogRepository
 ) {
