@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Replace with final NIYUVA icon designed by owner — warm, Indian-modern aesthetic -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#8B5E6D"
+        android:pathData="M36,28 L36,80 L44,80 L44,48 L64,80 L72,80 L72,28 L64,28 L64,60 L44,28 Z" />
+</vector>

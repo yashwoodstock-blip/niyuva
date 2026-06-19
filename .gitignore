@@ -1,0 +1,20 @@
+﻿# Built artifacts
+build/
+app/build/
+.gradle/
+
+# Local configuration
+local.properties
+
+# Log files
+*.log
+*.txt
+
+# Android Studio / IntelliJ files
+.idea/
+*.iml
+.cxx/
+
+# Gradle wrapper cache / temporary files
+.gradle-cache/
+*.apk

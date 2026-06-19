@@ -1,0 +1,564 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "606d23eb1a92206bd49fe5aa83d033ab",
+    "entities": [
+      {
+        "tableName": "cycles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `start_date` TEXT NOT NULL, `end_date` TEXT, `cycle_length` INTEGER, `period_length` INTEGER, `notes` TEXT, `created_at` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startDate",
+            "columnName": "start_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endDate",
+            "columnName": "end_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cycleLength",
+            "columnName": "cycle_length",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "periodLength",
+            "columnName": "period_length",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "daily_logs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` TEXT NOT NULL, `flow_level` TEXT, `blood_color` TEXT, `clot_size` TEXT, `pain_level` TEXT, `pain_types` TEXT, `discharge_type` TEXT, `energy_level` TEXT, `sleep_quality` TEXT, `mood` TEXT, `sexual_activity` TEXT, `birth_control` TEXT, `source` TEXT NOT NULL DEFAULT 'manual', `created_at` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flowLevel",
+            "columnName": "flow_level",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bloodColor",
+            "columnName": "blood_color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clotSize",
+            "columnName": "clot_size",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "painLevel",
+            "columnName": "pain_level",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "painTypes",
+            "columnName": "pain_types",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dischargeType",
+            "columnName": "discharge_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "energyLevel",
+            "columnName": "energy_level",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sleepQuality",
+            "columnName": "sleep_quality",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mood",
+            "columnName": "mood",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sexualActivity",
+            "columnName": "sexual_activity",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "birthControl",
+            "columnName": "birth_control",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'manual'"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_daily_logs_date",
+            "unique": true,
+            "columnNames": [
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_daily_logs_date` ON `${TABLE_NAME}` (`date`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "chat_logs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `timestamp` TEXT NOT NULL, `role` TEXT NOT NULL, `message` TEXT NOT NULL, `logs_extracted` TEXT, `created_at` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logsExtracted",
+            "columnName": "logs_extracted",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "insights",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` TEXT NOT NULL, `insight_type` TEXT NOT NULL, `content` TEXT NOT NULL, `source` TEXT NOT NULL, `created_at` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "insightType",
+            "columnName": "insight_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "user_profile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `age` INTEGER, `average_cycle_length` INTEGER, `average_period_length` INTEGER, `last_period_start_date` TEXT, `pin_hash` TEXT, `security_question` TEXT, `security_answer_hash` TEXT, `ai_enabled` INTEGER NOT NULL DEFAULT 0, `ai_provider` TEXT, `onboarding_complete` INTEGER NOT NULL DEFAULT 0, `created_at` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "age",
+            "columnName": "age",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "averageCycleLength",
+            "columnName": "average_cycle_length",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "averagePeriodLength",
+            "columnName": "average_period_length",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastPeriodStartDate",
+            "columnName": "last_period_start_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pinHash",
+            "columnName": "pin_hash",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "securityQuestion",
+            "columnName": "security_question",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "securityAnswerHash",
+            "columnName": "security_answer_hash",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "aiEnabled",
+            "columnName": "ai_enabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "aiProvider",
+            "columnName": "ai_provider",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "onboardingComplete",
+            "columnName": "onboarding_complete",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "notifications_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `type` TEXT NOT NULL, `enabled` INTEGER NOT NULL DEFAULT 1, `days_before` INTEGER, `time_of_day` TEXT, `custom_message` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "daysBefore",
+            "columnName": "days_before",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeOfDay",
+            "columnName": "time_of_day",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "customMessage",
+            "columnName": "custom_message",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_notifications_config_type",
+            "unique": true,
+            "columnNames": [
+              "type"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_notifications_config_type` ON `${TABLE_NAME}` (`type`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "streaks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `current_streak` INTEGER NOT NULL, `longest_streak` INTEGER NOT NULL, `last_log_date` TEXT, `milestone_7_shown` INTEGER NOT NULL, `milestone_30_shown` INTEGER NOT NULL, `milestone_100_shown` INTEGER NOT NULL, `updated_at` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentStreak",
+            "columnName": "current_streak",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longestStreak",
+            "columnName": "longest_streak",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastLogDate",
+            "columnName": "last_log_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "milestone7Shown",
+            "columnName": "milestone_7_shown",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "milestone30Shown",
+            "columnName": "milestone_30_shown",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "milestone100Shown",
+            "columnName": "milestone_100_shown",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ai_analysis_results",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `analysis_date` TEXT NOT NULL, `analysis_type` TEXT NOT NULL, `chunk_sequence` INTEGER NOT NULL, `raw_response` TEXT NOT NULL, `parsed_summary` TEXT NOT NULL, `status` TEXT NOT NULL, `created_at` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "analysisDate",
+            "columnName": "analysis_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "analysisType",
+            "columnName": "analysis_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chunkSequence",
+            "columnName": "chunk_sequence",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rawResponse",
+            "columnName": "raw_response",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parsedSummary",
+            "columnName": "parsed_summary",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '606d23eb1a92206bd49fe5aa83d033ab')"
+    ]
+  }
+}

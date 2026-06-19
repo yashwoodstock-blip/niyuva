@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NIYUVA</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_save">Save</string>
+    <string name="error_generic">Kuch hua — phir try karo 💛</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_body">Body</string>
+    <string name="nav_saarthi">Saarthi</string>
+    <string name="nav_discover">Discover</string>
+    <string name="nav_me">Me</string>
+    <string name="empty_state_title">Pehli period date add karo!</string>
+    <string name="empty_state_body">Teri predictions start hogi jab tu apni last period date add karegi.</string>
+    <string name="btn_add_period_date">Period date add karo</string>
+    <string name="warning_ai_connection_fail">AI connect nahi ho raha — Mode 1 mein jawab de rahi hoon 💛</string>
+    <string name="empty_search_results">Koi topic nahi mila \'%1$s\' ke liye 🔍</string>
+    <string name="link_clear_search">Clear search</string>
+    <string name="btn_retry">Phir try karo 🔄</string>
+    
+    <string name="confidence_estimated">Estimated</string>
+    <string name="confidence_likely">Likely</string>
+    <string name="confidence_confident">Confident ✦</string>
+    <string name="estimated_note">Pehle 2-3 cycles mein prediction thodi approximate hoti hai —\njitna zyada log karegi, utna accurate hoga 🌸</string>
+    <string name="prediction_next_period_range">%1$s ke beech aa sakta hai</string>
+    <string name="aaj_kaisa_title">Aaj kaisa chal raha hai?</string>
+    <string name="streak_recovery_title">Kal log nahi kar payi — koi baat nahi! 🌸</string>
+    <string name="streak_recovery_body">Aaj log karke apni streak continue rakhna chahti hai?</string>
+    <string name="streak_recovery_btn_yes">Haan, log karti hoon</string>
+    <string name="streak_recovery_btn_no">Rehne do</string>
+    <string name="low_data_analysis_warning">Kam data ki wajah se accuracy thodi kam ho sakti hai — regular logging se predictions behtar hogi 🌸</string>
+    <string name="notification_early_title">Kuch din bache hain! 🌸</string>
+    <string name="notification_early_body">Hormone changes shuru ho rahe hain — take it easy 💛</string>
+    <string name="notification_close_title">Kal period aa sakta hai! 🌸</string>
+    <string name="notification_close_body">Apna pouch ready rakho aur hydration ka dhyan rakho 💧</string>
+    <string name="notification_standard_title">Period aa raha hai! 🌸</string>
+    <string name="notification_standard_body">Tera period %1$d din mein aa sakta hai — pouch ready kar lo!</string>
+</resources>

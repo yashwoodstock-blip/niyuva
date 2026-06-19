@@ -1,0 +1,4 @@
+-keep class com.niyuva.app.data.local.entity.** { *; }
+-keep class com.niyuva.app.domain.model.** { *; }
+-keep class com.niyuva.app.data.remote.api.** { *; }
+-dontwarn net.zetetic.**
