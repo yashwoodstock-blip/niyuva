@@ -112,11 +112,12 @@ enum class SleepQuality {
 }
 
 enum class LogSource {
-    MANUAL, SAARTHI;
+    MANUAL, DIDI;
 
     companion object {
         fun fromString(value: String?): LogSource {
             if (value == null) return MANUAL
+            if (value.equals("SAARTHI", ignoreCase = true)) return DIDI
             return entries.find { it.name.equals(value, ignoreCase = true) } ?: MANUAL
         }
     }

@@ -7,7 +7,7 @@
 
 ### App Name, Purpose, and Target Audience
 *   **App Name**: NIYUVA (derived from youth/new beginnings and wellness)
-*   **Purpose**: NIYUVA is a premium, privacy-focused menstrual health, cycle tracking, and holistic wellness application. It is designed to help users track their periods, predict ovulation dates, log symptoms and moods, obtain ayurvedic and phase-specific recommendations (diet/exercise), read educational articles, and consult an offline/online AI assistant named "Saarthi" for medical query help.
+*   **Purpose**: NIYUVA is a premium, privacy-focused menstrual health, cycle tracking, and holistic wellness application. It is designed to help users track their periods, predict ovulation dates, log symptoms and moods, obtain ayurvedic and phase-specific recommendations (diet/exercise), read educational articles, and consult an offline/online AI assistant named "Didi" for medical query help.
 *   **Target Audience**: Adolescents, young adults, and women seeking an intuitive, aesthetically-pleasing, and data-secure platform for cycle tracking and body education.
 
 ### Technology Stack
@@ -51,13 +51,13 @@ app/src/main/java/com/niyuva/app/
 │   │   │   ├── KyaKhayenData.kt          # Diet, foods, and exercises database by cycle phase
 │   │   │   ├── LocalArticleRepository.kt # Static collection of articles (PCOS, hygiene, hormones, etc.)
 │   │   │   ├── PehliBaarStoriesData.kt   # Stories database representing real-world onboarding testimonies
-│   │   │   ├── SaarthiResponseLibrary.kt # Pre-programmed responses used by Saarthi if API offline/unconfigured
+│   │   │   ├── DidiResponseLibrary.kt    # Pre-programmed responses used by Didi if API offline/unconfigured
 │   │   │   ├── ThemeStoriesData.kt       # Theme category configurations for stories
 │   │   │   └── VedicWisdomData.kt        # Ayurvedic wellness, yoga, and herbal remedies data
 │   │   │
 │   │   ├── dao/                          # Room Database Data Access Objects
 │   │   │   ├── AiAnalysisResultDao.kt    # DAO for raw and parsed AI summaries
-│   │   │   ├── ChatLogDao.kt             # DAO for conversational chat messages with Saarthi
+│   │   │   ├── ChatLogDao.kt             # DAO for conversational chat messages with Didi
 │   │   │   ├── CycleDao.kt               # DAO for period cycle logs (start and end dates)
 │   │   │   ├── DailyLogDao.kt            # DAO for daily symptoms, flow level, mood, notes
 │   │   │   ├── InsightDao.kt             # DAO for calculated phase insights and anomalies
@@ -130,7 +130,7 @@ app/src/main/java/com/niyuva/app/
 │   │   ├── DiscoverContent.kt            # Holds stories, Vedic items, categories
 │   │   ├── Insight.kt                    # Model for insights
 │   │   ├── NotificationConfig.kt         # Model for alerts config
-│   │   ├── SaarthiResponse.kt            # Model for offline chatbot replies
+│   │   ├── DidiResponse.kt               # Model for offline chatbot replies
 │   │   └── UserProfile.kt                # Model for user settings
 │   │
 │   ├── repository/                       # Domain Repository Interfaces
@@ -139,7 +139,7 @@ app/src/main/java/com/niyuva/app/
 │   └── usecase/                          # Business logic Use Cases
 │       ├── BuildAiContextUseCase.kt      # Generates a JSON snapshot of app state for the AI context
 │       ├── BuildDayStripUseCase.kt       # Computes the 7-day calendar strip shown on dashboard
-│       ├── BuildSaarthiSystemPromptUseCase.kt # Assembles instructions for Saarthi chatbot
+│       ├── BuildDidiSystemPromptUseCase.kt    # Assembles instructions for Didi chatbot
 │       ├── ChatUseCases.kt               # Fetches/clears chat history
 │       ├── CycleUseCases.kt              # Adds cycle dates, predicts dates
 │       ├── DailyLogUseCases.kt           # Retrives/adds daily symptoms
@@ -152,7 +152,7 @@ app/src/main/java/com/niyuva/app/
 │       ├── GetDailyTipUseCase.kt         # Decides phase-appropriate health recommendation
 │       ├── HealthAnalysisEngine.kt       # Calculates trends from symptoms logs over time
 │       ├── InsertDefaultNotificationsUseCase.kt # Sets default alert configs
-│       ├── MatchSaarthiResponseUseCase.kt # Offline response selector using keyword metrics
+│       ├── MatchDidiResponseUseCase.kt        # Offline response selector using keyword metrics
 │       ├── NotificationUseCases.kt       # Fetches preferences, schedules updates
 │       ├── PostProcessAiResponseUseCase.kt # Sanitizes chatbot output text
 │       ├── PredictionUseCases.kt         # Calculates future period start dates
@@ -223,10 +223,10 @@ app/src/main/java/com/niyuva/app/
         │   ├── OnboardingSecurityScreen.kt # Set security question
         │   └── OnboardingViewModel.kt    # Gathers onboarding entries
         │
-        └── saarthi/                      # Saarthi Tab: Conversational AI
-            ├── SaarthiScreen.kt          # Chat screen (autoscroll timing fixed)
-            ├── SaarthiViewModel.kt       # Manages chat logs, handles online/offline AI prompts
-            └── SaarthiVoiceScreen.kt     # Voice input layout with typing indicators
+        └── didi/                         # Didi Tab: Conversational AI
+            ├── DidiScreen.kt             # Chat screen (autoscroll timing fixed)
+            ├── DidiViewModel.kt          # Manages chat logs, handles online/offline AI prompts
+            └── DidiVoiceScreen.kt        # Voice input layout with typing indicators
 ```
 
 ---
@@ -384,12 +384,12 @@ A multi-step registration wizard that collects configuration baselines.
 
 ---
 
-### 5. Saarthi AI Chat (`SaarthiScreen.kt`)
-*   **Purpose**: Conversations with the Saarthi virtual health assistant.
+### 5. Didi AI Chat (`DidiScreen.kt`)
+*   **Purpose**: Conversations with the Didi virtual health assistant.
 *   **UI Components**:
     *   `LazyColumn` list: Displays the chat history. The scroll behavior is delayed by `100ms` on tab load to ensure correct bottom snapping.
     *   Typing indicator: Shows a clean, animated dot-wave while waiting for responses.
-    *   Voice button: Tapping it opens `SaarthiVoiceScreen.kt` for speech-to-text input.
+    *   Voice button: Tapping it opens `DidiVoiceScreen.kt` for speech-to-text input.
 
 ---
 
@@ -563,8 +563,8 @@ Provides Retrofit interfaces:
 *   *Handling*: Incorrect attempts are tracked in `NiyuvaPreferences`. If attempts reach 5, 10, or 20, a lockout timestamp is saved. During an active lockout, the keypad is disabled. Closing the app or restarting the device does not bypass the lockout because the expiration timestamp is persisted.
 
 ### Offline AI Fallbacks
-*   *Edge Case*: A user asks Saarthi a question while offline.
-*   *Handling*: The app catches network exceptions (e.g., `UnknownHostException`). Instead of showing a crash screen, it uses `MatchSaarthiResponseUseCase` to search for matching keywords in the local `SaarthiResponseLibrary` and returns a helpful pre-programmed offline response.
+*   *Edge Case*: A user asks Didi a question while offline.
+*   *Handling*: The app catches network exceptions (e.g., `UnknownHostException`). Instead of showing a crash screen, it uses `MatchDidiResponseUseCase` to search for matching keywords in the local `DidiResponseLibrary` and returns a helpful pre-programmed offline response.
 
 ### Empty and Error States
 *   *Handling*: Screens that load content (e.g. Analytics, Cycle History) observe state flows containing `Loading`, `Success`, or `Error` classes. If a load fails, `NiyuvaErrorCard` is displayed with a retry button. If no data exists, `EmptyStateView` is shown with instructions on how to add logs.

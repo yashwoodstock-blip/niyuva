@@ -12,7 +12,7 @@ import com.niyuva.app.data.remote.api.OpenAiMessage
 import com.niyuva.app.data.remote.api.OpenRouterApiService
 import com.niyuva.app.domain.model.AiProvider
 import com.niyuva.app.domain.usecase.BuildAiContextUseCase
-import com.niyuva.app.domain.usecase.BuildSaarthiSystemPromptUseCase
+import com.niyuva.app.domain.usecase.BuildDidiSystemPromptUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class AiRepository @Inject constructor(
     private val openRouterService: OpenRouterApiService,
     private val preferences: NiyuvaPreferences,
     private val buildAiContextUseCase: BuildAiContextUseCase,
-    private val buildSystemPromptUseCase: BuildSaarthiSystemPromptUseCase
+    private val buildSystemPromptUseCase: BuildDidiSystemPromptUseCase
 ) {
     suspend fun sendMessage(userMessage: String, provider: AiProvider): String = withContext(Dispatchers.IO) {
         @Suppress("SecretInLogs")

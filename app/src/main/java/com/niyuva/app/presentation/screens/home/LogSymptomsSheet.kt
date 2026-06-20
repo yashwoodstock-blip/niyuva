@@ -182,7 +182,7 @@ fun LogSymptomsSheet(
     onEnergyLevelSelected: (String?) -> Unit,
     onDischargeTypeSelected: (String?) -> Unit,
     onSave: () -> Unit,
-    onOpenSaarthi: () -> Unit
+    onOpenDidi: () -> Unit
 ) {
     NiyuvaBottomSheet(onDismissRequest = onDismiss) {
         Column(
@@ -317,7 +317,7 @@ fun LogSymptomsSheet(
                 } else {
                     // Non-Period Day: Show rotated fields under a single "Aaj kaisa chal raha hai?" card
                     val todaysPair = getTodaysOptionalCategories(state.selectedDate)
-                    val visibleCats = filterAlreadyLoggedViaConversation(todaysPair, state.saarthiLoggedToday)
+                    val visibleCats = filterAlreadyLoggedViaConversation(todaysPair, state.didiLoggedToday)
 
                     if (visibleCats.isNotEmpty()) {
                         stickyHeader(key = "header_optional_rotated") {
@@ -417,15 +417,15 @@ fun LogSymptomsSheet(
                     .padding(horizontal = 20.dp)
             )
 
-            // ── Bottom: Saarthi link ──────────────────────────────────────────
+            // ── Bottom: Didi link ──────────────────────────────────────────
             Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 NiyuvaTextLink(
-                    text    = "+ Saarthi se batao",
-                    onClick = onOpenSaarthi
+                    text    = "+ Didi se batao",
+                    onClick = onOpenDidi
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -721,8 +721,8 @@ private fun getTodaysOptionalCategories(date: LocalDate): List<OptionalLogCatego
 
 private fun filterAlreadyLoggedViaConversation(
     categories: List<OptionalLogCategory>,
-    saarthiLoggedToday: Set<OptionalLogCategory>
+    didiLoggedToday: Set<OptionalLogCategory>
 ): List<OptionalLogCategory> {
-    return categories.filter { it !in saarthiLoggedToday }
+    return categories.filter { it !in didiLoggedToday }
 }
 

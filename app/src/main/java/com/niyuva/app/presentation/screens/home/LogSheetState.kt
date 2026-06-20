@@ -33,5 +33,5 @@ data class LogSheetState(
     val savedSuccess: Boolean = false,
     val hasError: Boolean = false,
     val continueStreak: Boolean = false,
-    val saarthiLoggedToday: Set<OptionalLogCategory> = emptySet()
+    val didiLoggedToday: Set<OptionalLogCategory> = emptySet()
 )

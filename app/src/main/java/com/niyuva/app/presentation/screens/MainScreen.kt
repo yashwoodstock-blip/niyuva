@@ -30,7 +30,7 @@ import com.niyuva.app.presentation.screens.discover.DiscoverScreen
 import com.niyuva.app.presentation.screens.home.CycleReportScreen
 import com.niyuva.app.presentation.screens.home.HomeScreen
 import com.niyuva.app.presentation.screens.me.MeScreen
-import com.niyuva.app.presentation.screens.saarthi.SaarthiScreen
+import com.niyuva.app.presentation.screens.didi.DidiScreen
 
 @Composable
 fun MainScreen(
@@ -159,8 +159,8 @@ fun MainScreen(
                         modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                     )
                 }
-                composable(NavRoutes.Saarthi.route) {
-                    SaarthiScreen(
+                composable(NavRoutes.Didi.route) {
+                    DidiScreen(
                         navController = parentNavController,
                         contentPadding = innerPadding
                     )

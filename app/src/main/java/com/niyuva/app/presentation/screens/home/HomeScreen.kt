@@ -610,9 +610,9 @@ fun HomeScreen(
                 onEnergyLevelSelected   = { viewModel.onEnergyLevelSelected(it) },
                 onDischargeTypeSelected = { viewModel.onDischargeTypeSelected(it) },
                 onSave                  = { viewModel.saveLog() },
-                onOpenSaarthi           = {
+                onOpenDidi              = {
                     viewModel.hideLogSheet()
-                    navController.navigate(NavRoutes.Saarthi.route) {
+                    navController.navigate(NavRoutes.Didi.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

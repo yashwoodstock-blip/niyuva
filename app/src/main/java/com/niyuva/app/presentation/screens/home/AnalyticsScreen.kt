@@ -209,7 +209,7 @@ fun AnalyticsScreen(
                     modifier = Modifier.padding(20.dp)
                 ) {
                     Text(
-                        text = "Saarthi phase insight ✨",
+                        text = "Didi phase insight ✨",
                         fontFamily = NunitoFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,

@@ -108,9 +108,9 @@ class HomeViewModel @Inject constructor(
         loadHomeData()
     }
 
-    private fun getSaarthiLoggedFields(log: DailyLog): Set<OptionalLogCategory> {
+    private fun getDidiLoggedFields(log: DailyLog): Set<OptionalLogCategory> {
         val set = mutableSetOf<OptionalLogCategory>()
-        if (log.source == com.niyuva.app.domain.model.LogSource.SAARTHI) {
+        if (log.source == com.niyuva.app.domain.model.LogSource.DIDI) {
             if (log.energyLevel != null) set.add(OptionalLogCategory.ENERGY)
             if (log.dischargeType != null) set.add(OptionalLogCategory.DISCHARGE)
             if (log.sleepQuality != null) set.add(OptionalLogCategory.SLEEP)
@@ -143,7 +143,7 @@ class HomeViewModel @Inject constructor(
                     sleepQuality = existing.sleepQuality,
                     moods = existing.moods.toSet(),
                     birthControl = existing.birthControl,
-                    saarthiLoggedToday = getSaarthiLoggedFields(existing)
+                    didiLoggedToday = getDidiLoggedFields(existing)
                 )
             } else {
                 LogSheetState(selectedDate = selected)
@@ -193,7 +193,7 @@ class HomeViewModel @Inject constructor(
                     moods = existing.moods.toSet(),
                     birthControl = existing.birthControl,
                     continueStreak = true,
-                    saarthiLoggedToday = getSaarthiLoggedFields(existing)
+                    didiLoggedToday = getDidiLoggedFields(existing)
                 )
             } else {
                 LogSheetState(

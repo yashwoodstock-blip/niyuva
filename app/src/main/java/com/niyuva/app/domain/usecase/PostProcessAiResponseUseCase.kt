@@ -15,10 +15,7 @@ class PostProcessAiResponseUseCase @Inject constructor() {
         // 2. Remove markdown bold/italic
         processed = processed.replace("*", "").replace("_", "")
 
-        // 3. Trim to max 400 characters
-        if (processed.length > 400) {
-            processed = processed.substring(0, 397) + "..."
-        }
+
 
         // 4. Ensure response ends with a warm emoji
         if (processed.isNotEmpty()) {

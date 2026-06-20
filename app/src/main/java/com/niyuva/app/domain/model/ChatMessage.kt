@@ -11,11 +11,12 @@ data class ChatMessage(
 )
 
 enum class ChatRole {
-    USER, SAARTHI;
+    USER, DIDI;
 
     companion object {
         fun fromString(value: String?): ChatRole {
             if (value == null) return USER
+            if (value.equals("SAARTHI", ignoreCase = true)) return DIDI
             return entries.find { it.name.equals(value, ignoreCase = true) } ?: USER
         }
     }

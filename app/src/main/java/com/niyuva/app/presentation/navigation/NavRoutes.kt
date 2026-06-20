@@ -10,7 +10,7 @@ sealed class NavRoutes(val route: String) {
     // Main tabs
     object Home : NavRoutes("home")
     object Body : NavRoutes("body")
-    object Saarthi : NavRoutes("saarthi")
+    object Didi : NavRoutes("didi")
     object Discover : NavRoutes("discover")
     object Me : NavRoutes("me")
     
@@ -24,7 +24,7 @@ sealed class NavRoutes(val route: String) {
     object BodyArticle : NavRoutes("body_article/{topicId}") {
         fun createRoute(topicId: String) = "body_article/$topicId"
     }
-    object SaarthiVoice : NavRoutes("saarthi_voice")
+    object DidiVoice : NavRoutes("didi_voice")
     object PehliBaarStories : NavRoutes("pehli_baar_stories")
     object ThemeStories : NavRoutes("theme_stories/{themeId}") {
         fun createRoute(themeId: String) = "theme_stories/$themeId"

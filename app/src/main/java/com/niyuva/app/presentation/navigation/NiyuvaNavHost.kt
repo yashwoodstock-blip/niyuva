@@ -70,9 +70,9 @@ fun NiyuvaNavHost(
             MainScreen(parentNavController = navController)
         }
 
-        // Saarthi Voice Input Screen
-        composable(NavRoutes.SaarthiVoice.route) {
-            com.niyuva.app.presentation.screens.saarthi.SaarthiVoiceScreen(navController = navController)
+        // Didi Voice Input Screen
+        composable(NavRoutes.DidiVoice.route) {
+            com.niyuva.app.presentation.screens.didi.DidiVoiceScreen(navController = navController)
         }
 
         // Body Article Reader Screen

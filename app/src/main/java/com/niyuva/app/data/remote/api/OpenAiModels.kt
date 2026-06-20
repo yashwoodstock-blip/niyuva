@@ -3,7 +3,7 @@ package com.niyuva.app.data.remote.api
 data class OpenAiChatRequest(
     val model: String,
     val messages: List<OpenAiMessage>,
-    val max_tokens: Int = 2000,
+    val max_tokens: Int = 4000,
     val temperature: Float = 0.7f
 )
 

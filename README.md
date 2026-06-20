@@ -1,7 +1,7 @@
 # NIYUVA User Guide
 ## Your Private, Smart Companion for Cycle Tracking and Wellness 🌸
 
-Welcome to **NIYUVA**! NIYUVA is a secure, private, and beautiful application designed to help you track your cycle phases, monitor your health patterns, learn about your body, and ask wellness questions to your personal AI companion, **Saarthi**.
+Welcome to **NIYUVA**! NIYUVA is a secure, private, and beautiful application designed to help you track your cycle phases, monitor your health patterns, learn about your body, and ask wellness questions to your personal AI companion, **Didi**.
 
 ---
 
@@ -63,19 +63,19 @@ NIYUVA is a secure, premium cycle tracking and wellness app that helps you manag
 
 ---
 
-### 3. Consulting Saarthi (AI Assistant)
+### 3. Consulting Didi (AI Assistant)
 *   **What it does**: Provides answers to your wellness questions and helps you log symptoms through voice or text chat.
 *   **How to use it**:
-    1.  Tap the **Saarthi** tab in the bottom navigation menu.
+    1.  Tap the **Didi** tab in the bottom navigation menu.
     2.  Type your question in the text box (e.g., "What foods should I eat during cramps?") and tap **Send**.
-    3.  To use voice input, tap the **Microphone** icon, speak your question, and let Saarthi convert it to text.
-    4.  Saarthi will respond with health advice. If you are offline, Saarthi will use its local library to give you a pre-programmed answer.
+    3.  To use voice input, tap the **Microphone** icon, speak your question, and let Didi convert it to text.
+    4.  Didi will respond with health advice. If you are offline, Didi will use its local library to give you a pre-programmed answer.
 *   **Chat Buttons**:
     *   *Send Arrow*: Sends your message.
     *   *Microphone Icon*: Opens the voice typing screen.
     *   *Keyboard Icon*: Returns to text entry.
 
-[SCREENSHOT: The Saarthi chat screen showing conversation bubbles, voice layout, and typing animations]
+[SCREENSHOT: The Didi chat screen showing conversation bubbles, voice layout, and typing animations]
 
 ---
 
@@ -97,7 +97,7 @@ To keep your app running smoothly, NIYUVA requests the following standard permis
 *   **Notifications (API 33+)**: Allows the app to show daily health tips and remind you to log your metrics.
 *   **Exact Alarm**: Allows the app to trigger period alerts at the exact time you schedule them, even if your phone is asleep.
 *   **Biometrics (Fingerprint/Face Unlock)**: Allows you to unlock the app using your device's fingerprint scanner instead of typing your PIN.
-*   **Internet**: Allows the app to communicate with secure AI servers to generate responses for Saarthi.
+*   **Internet**: Allows the app to communicate with secure AI servers to generate responses for Didi.
 
 ---
 
@@ -113,7 +113,7 @@ This happens if you enter a wrong PIN 5 or more times.
 ### 3. I forgot my PIN and my security question answer.
 *   *Solution*: For your privacy, we do not store your passwords on a server. If you forget both, tap **Reset App** in the recovery menu. This will wipe all local data and let you create a new setup from scratch.
 
-### 4. Saarthi is not responding to my messages.
+### 4. Didi is not responding to my messages.
 *   *Solution*: Check if your phone has a working internet connection. If you are offline, verify that you have configured your AI API key in Settings under the **Me** tab.
 
 ### 5. Period alerts or daily tip notifications are not showing up.
@@ -125,7 +125,7 @@ This happens if you enter a wrong PIN 5 or more times.
 ### 7. I cannot restore my backup file.
 *   *Solution*: Ensure the backup file is in the correct format (`.json`) and that you are entering the same password used to create the backup.
 
-### 8. The keyboard overlaps my chat input box in Saarthi.
+### 8. The keyboard overlaps my chat input box in Didi.
 *   *Solution*: Tap outside the chat box to hide the keyboard, or swipe down on the chat list to scroll.
 
 ### 9. Voice input is not registering.
@@ -148,7 +148,7 @@ This happens if you enter a wrong PIN 5 or more times.
 **A**: The app adds your average cycle length (e.g., 28 days) to the start date of your last period. As you log more actual cycles, the app adjusts the predictions to match your body's patterns.
 
 ### Q4: Can I use the app without an internet connection?
-**A**: Yes! Cycle tracking, dashboard updates, symptom logging, and article reading work completely offline. Internet is only required to chat with Saarthi using online AI models.
+**A**: Yes! Cycle tracking, dashboard updates, symptom logging, and article reading work completely offline. Internet is only required to chat with Didi using online AI models.
 
 ### Q5: How do I change my daily reminder time?
 **A**: Go to the **Me** tab, tap **Notification Settings**, and choose your preferred time for daily wellness tips.

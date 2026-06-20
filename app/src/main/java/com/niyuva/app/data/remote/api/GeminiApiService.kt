@@ -22,7 +22,7 @@ data class GeminiRequest(
 data class GeminiContent(val role: String? = null, val parts: List<GeminiPart>)
 data class GeminiPart(val text: String)
 data class GeminiGenerationConfig(
-    val maxOutputTokens: Int = 2000,
+    val maxOutputTokens: Int = 4000,
     val temperature: Float = 0.7f
 )
 data class GeminiResponse(val candidates: List<GeminiCandidate>)

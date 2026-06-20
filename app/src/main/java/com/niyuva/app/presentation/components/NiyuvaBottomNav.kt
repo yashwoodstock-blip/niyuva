@@ -68,8 +68,8 @@ fun NiyuvaBottomNav(
                 inactiveIcon = Icons.Outlined.Spa
             ),
             BottomNavTab(
-                route = NavRoutes.Saarthi.route,
-                label = "Saarthi",
+                route = NavRoutes.Didi.route,
+                label = "Didi",
                 activeIcon = Icons.Filled.AutoAwesome,
                 inactiveIcon = Icons.Outlined.AutoAwesome
             ),
