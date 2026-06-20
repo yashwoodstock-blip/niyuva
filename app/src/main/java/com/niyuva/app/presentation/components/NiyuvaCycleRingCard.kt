@@ -93,7 +93,10 @@ fun NiyuvaCycleRingCard(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 3. Log symptoms button
-                LogSymptomsButton(onClick = onLogSymptomsClicked)
+                val isToday = uiState.selectedDate == java.time.LocalDate.now()
+                val formatter = java.time.format.DateTimeFormatter.ofPattern("MMM d")
+                val buttonLabel = if (isToday) "Log today's symptoms" else "Log symptoms for ${uiState.selectedDate.format(formatter)}"
+                LogSymptomsButton(label = buttonLabel, onClick = onLogSymptomsClicked)
         }
     }
 }
@@ -168,6 +171,7 @@ private fun PhaseLegendCell(
 
 @Composable
 private fun LogSymptomsButton(
+    label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -183,7 +187,7 @@ private fun LogSymptomsButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text       = "Log today's symptoms",
+            text       = label,
             fontFamily = NunitoFamily,
             fontWeight = FontWeight.Bold,
             fontSize   = 16.sp,

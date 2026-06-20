@@ -116,7 +116,7 @@ fun OnboardingNavHost(
             BackHandler { viewModel.onBackClicked() }
             OnboardingCycleBasicsScreen(
                 onBack = { viewModel.onBackClicked() },
-                onContinue = { cycleLen, periodLen ->
+                onContinue = { periodLen, cycleLen ->
                     viewModel.onCycleBasicsEntered(cycleLen, periodLen)
                 }
             )

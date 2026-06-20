@@ -14,13 +14,13 @@ val PureWhite = Color(0xFFFFFFFF)           // Cards on phase backgrounds, splas
 
 // Phase Colors
 val PhaseColorMenstruation = Color(0xFFC17A8A)   // Deep Rose
-val PhaseColorFollicular = Color(0xFFE8B89A)     // Soft Peach
+val PhaseColorFollicular = Color(0xFF76C4B4)     // Fresh Teal
 val PhaseColorOvulation = Color(0xFFA8C5A0)      // Sage Green
 val PhaseColorLuteal = Color(0xFFD4A574)         // Warm Amber
 
 // Phase Gradient Endpoints
 val PhaseGradientMenstruationEnd = Color(0xFFD4A5B5)
-val PhaseGradientFollicularEnd = Color(0xFFF5D4BE)
+val PhaseGradientFollicularEnd = Color(0xFFCBEAE3)
 val PhaseGradientOvulationEnd = Color(0xFFC8E0C2)
 val PhaseGradientLutealEnd = Color(0xFFE8C9A0)
 

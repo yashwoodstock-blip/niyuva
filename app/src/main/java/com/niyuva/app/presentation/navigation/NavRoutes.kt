@@ -18,7 +18,9 @@ sealed class NavRoutes(val route: String) {
     object CycleReport : NavRoutes("cycle_report")
     object Analytics : NavRoutes("analytics")
     object AnalysisResults : NavRoutes("analysis_results")
-    object KyaKhayen : NavRoutes("kya_khayen")
+    object KyaKhayen : NavRoutes("kya_khayen?phase={phase}") {
+        fun createRoute(phase: String) = "kya_khayen?phase=$phase"
+    }
     object BodyArticle : NavRoutes("body_article/{topicId}") {
         fun createRoute(topicId: String) = "body_article/$topicId"
     }

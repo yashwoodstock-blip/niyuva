@@ -3,6 +3,7 @@ package com.niyuva.app.presentation.components
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -100,6 +101,11 @@ private fun DayCell(
             .width(44.dp)
             .height(80.dp)
             .clip(RoundedCornerShape(8.dp))
+            .background(if (item.isSelected) Color.White.copy(alpha = 0.15f) else Color.Transparent)
+            .then(
+                if (item.isSelected) Modifier.border(1.5.dp, Color.White, RoundedCornerShape(8.dp))
+                else Modifier
+            )
             .clickable(
                 onClick = onTapped
             ),

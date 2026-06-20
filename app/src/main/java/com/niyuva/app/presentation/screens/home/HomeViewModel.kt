@@ -11,6 +11,7 @@ import com.niyuva.app.domain.model.FlowLevel
 import com.niyuva.app.domain.model.PainLevel
 import com.niyuva.app.domain.model.SleepQuality
 import com.niyuva.app.domain.repository.CycleRepository
+import com.niyuva.app.domain.repository.DailyLogRepository
 import com.niyuva.app.domain.repository.InsightRepository
 import com.niyuva.app.domain.repository.UserProfileRepository
 import com.niyuva.app.domain.repository.StreakRepository
@@ -50,7 +51,8 @@ class HomeViewModel @Inject constructor(
     private val scheduleAllNotificationsUseCase: ScheduleAllNotificationsUseCase,
     private val cycleRepository: CycleRepository,
     private val streakRepository: StreakRepository,
-    private val streakTracker: StreakTracker
+    private val streakTracker: StreakTracker,
+    private val dailyLogRepository: DailyLogRepository
 ) : ViewModel() {
 
     // ─────────────────────────────────────────────
@@ -59,6 +61,16 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _selectedDate = MutableStateFlow(LocalDate.now())
+    val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+
+    fun selectDate(date: LocalDate) {
+        viewModelScope.launch {
+            _selectedDate.value = date
+            loadHomeData()
+        }
+    }
 
     // Log sheet
     private val _logSheetState = MutableStateFlow(LogSheetState())
@@ -75,7 +87,16 @@ class HomeViewModel @Inject constructor(
     // ─────────────────────────────────────────────
 
     init {
-        loadHomeData()
+        viewModelScope.launch {
+            userProfileRepository.observeProfile().collect {
+                loadHomeData()
+            }
+        }
+        viewModelScope.launch {
+            cycleRepository.getAllCycles().collect {
+                loadHomeData()
+            }
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -105,13 +126,13 @@ class HomeViewModel @Inject constructor(
     /** Opens the log symptoms sheet and resets sheet state to today, loading any existing log. */
     fun showLogSheet() {
         viewModelScope.launch {
-            val today = LocalDate.now()
+            val selected = _selectedDate.value
             val existing = withContext(Dispatchers.IO) {
-                runCatching { getLogForDateUseCase(today) }.getOrNull()
+                runCatching { getLogForDateUseCase(selected) }.getOrNull()
             }
             _logSheetState.value = if (existing != null) {
                 LogSheetState(
-                    selectedDate = today,
+                    selectedDate = selected,
                     flowLevel = existing.flowLevel,
                     bloodColor = existing.bloodColor,
                     clotSize = existing.clotSize,
@@ -125,7 +146,7 @@ class HomeViewModel @Inject constructor(
                     saarthiLoggedToday = getSaarthiLoggedFields(existing)
                 )
             } else {
-                LogSheetState(selectedDate = today)
+                LogSheetState(selectedDate = selected)
             }
             _showLogSheet.value = true
         }
@@ -360,6 +381,37 @@ class HomeViewModel @Inject constructor(
             // Ensure we are always in loading state at the start of a refresh
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
+            // Self-healing database correction: swap back cycle/period length if they are swapped
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    val p = userProfileRepository.getProfile()
+                    if (p != null) {
+                        val avgCycle = p.averageCycleLength ?: 28
+                        val avgPeriod = p.averagePeriodLength ?: 5
+                        if (avgCycle < avgPeriod) {
+                            android.util.Log.d("ANTIGRAVITY", "Detected swapped profile values: cycle=$avgCycle, period=$avgPeriod. Correcting...")
+                            userProfileRepository.saveProfile(p.copy(
+                                averageCycleLength = avgPeriod,
+                                averagePeriodLength = avgCycle
+                            ))
+                            
+                            val cycles = cycleRepository.getRecentCycles(100)
+                            cycles.forEach { cycle ->
+                                val cLen = cycle.cycleLength ?: 28
+                                val pLen = cycle.periodLength ?: 5
+                                if (cLen < pLen) {
+                                    android.util.Log.d("ANTIGRAVITY", "Detected swapped cycle values: cycle=$cLen, period=$pLen. Correcting...")
+                                    cycleRepository.updateCycle(cycle.copy(
+                                        cycleLength = pLen,
+                                        periodLength = cLen
+                                    ))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // Hard time-out: never stay in loading state for more than 2 seconds
             val result = withTimeoutOrNull(2_000L) {
                 withContext(Dispatchers.IO) {
@@ -409,6 +461,7 @@ class HomeViewModel @Inject constructor(
      */
     private suspend fun fetchAllData(): HomeUiState {
         val today = LocalDate.now()
+        val selectedDate = _selectedDate.value
 
         // 1. User profile
         val profile = userProfileRepository.getProfile()
@@ -421,7 +474,7 @@ class HomeViewModel @Inject constructor(
         val showEmptyState = cycleCount == 0 && lastPeriodStart == null
 
         // 2. Current phase
-        val phaseResult = getCurrentPhaseUseCase()
+        val phaseResult = getCurrentPhaseUseCase(selectedDate)
         val (phase, dayInCycle, totalCycleDays) = when (phaseResult) {
             is PhaseResult.Known -> Triple(
                 phaseResult.phase,
@@ -432,23 +485,21 @@ class HomeViewModel @Inject constructor(
         }
 
         // 3. Theme resolution — pure data, no UI imports
-        // ORIGINAL LOGIC (color changes according to cycle day):
-        // val phaseTheme = PhaseThemeData.fromPhase(phase)
-        val phaseTheme = PhaseThemeData.fromPhase(CyclePhase.MENSTRUATION)
+        val phaseTheme = PhaseThemeData.fromPhase(phase)
 
         // 4. Prediction (non-fatal: catch and surface inline)
         val prediction = runCatching {
-            calculatePredictionsUseCase(today)
+            calculatePredictionsUseCase(selectedDate)
         }.getOrNull()
 
         // 5. Day strip
-        val dayStrip = buildDayStripUseCase(today, defaultPeriodLength)
+        val dayStrip = buildDayStripUseCase(today, selectedDate, defaultPeriodLength)
 
         // 6. Daily tip
         val todayTip = getDailyTipUseCase(phase, dayInCycle)
 
         // 7. Today's log
-        val todayLog = getLogForDateUseCase(today)
+        val todayLog = getLogForDateUseCase(selectedDate)
 
         // 8. Greeting
         val greeting = buildGreeting(name, phase)
@@ -492,6 +543,8 @@ class HomeViewModel @Inject constructor(
                 && daysMissed == 1
                 && !recoveryPromptShownThisSession
 
+        val loggedDaysCount = runCatching { dailyLogRepository.getLogCount() }.getOrDefault(0)
+
         return HomeUiState(
             isLoading         = false,
             userName          = name,
@@ -515,7 +568,9 @@ class HomeViewModel @Inject constructor(
             confidenceLevel   = confidenceLevel,
             irregularityFlag  = irregularityFlag,
             showRecoveryPromptCard = showRecoveryPromptCard,
-            isSnapshotRowExpanded = _uiState.value.isSnapshotRowExpanded
+            isSnapshotRowExpanded = _uiState.value.isSnapshotRowExpanded,
+            loggedDaysCount   = loggedDaysCount,
+            selectedDate      = selectedDate
         )
     }
 

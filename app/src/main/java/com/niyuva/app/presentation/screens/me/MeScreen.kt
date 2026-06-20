@@ -46,6 +46,7 @@ import com.niyuva.app.presentation.components.*
 import com.niyuva.app.presentation.navigation.NavRoutes
 import com.niyuva.app.presentation.theme.*
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 @Composable
@@ -82,6 +83,8 @@ fun MeScreen(
     // Inline dialog states
     var showEditNameDialog by remember { mutableStateOf(false) }
     var showEditAgeDialog by remember { mutableStateOf(false) }
+    var showEditCycleDialog by remember { mutableStateOf(false) }
+    var showEditPeriodDialog by remember { mutableStateOf(false) }
     var showPrivacyPromiseDialog by remember { mutableStateOf(false) }
     var showBeliefDialog by remember { mutableStateOf(false) }
     var showDeleteConfirm1 by remember { mutableStateOf(false) }
@@ -92,6 +95,8 @@ fun MeScreen(
     // Input states inside dialogs
     var nameInput by remember { mutableStateOf("") }
     var ageInput by remember { mutableStateOf("") }
+    var cycleInput by remember { mutableStateOf("") }
+    var periodInput by remember { mutableStateOf("") }
 
     // AI Settings inputs
     var aiApiKeyInput by remember { mutableStateOf("") }
@@ -265,6 +270,7 @@ fun MeScreen(
 
             // PROFILE CARD
             item(key = "profile_card") {
+                val startFormatter = remember { DateTimeFormatter.ofPattern("d MMM yyyy") }
                 SettingsCard(sectionLabel = "Profile") {
                     SettingsRow(
                         icon = Icons.Outlined.Person,
@@ -291,12 +297,43 @@ fun MeScreen(
                     SettingsRow(
                         icon = Icons.Outlined.Loop,
                         label = "Average cycle",
-                        value = profile?.averageCycleLength?.let { "$it din" } ?: "—"
+                        value = profile?.averageCycleLength?.let { "$it din" } ?: "—",
+                        onClick = {
+                            profile?.let { p ->
+                                cycleInput = p.averageCycleLength?.toString() ?: "28"
+                            }
+                            showEditCycleDialog = true
+                        }
                     )
                     SettingsRow(
                         icon = Icons.Outlined.WaterDrop,
                         label = "Average period",
-                        value = profile?.averagePeriodLength?.let { "$it din" } ?: "—"
+                        value = profile?.averagePeriodLength?.let { "$it din" } ?: "—",
+                        onClick = {
+                            profile?.let { p ->
+                                periodInput = p.averagePeriodLength?.toString() ?: "5"
+                            }
+                            showEditPeriodDialog = true
+                        }
+                    )
+                    SettingsRow(
+                        icon = Icons.Outlined.CalendarToday,
+                        label = "Last period start",
+                        value = profile?.lastPeriodStartDate?.let { it.format(startFormatter) } ?: "Set karo",
+                        onClick = {
+                            val current = profile?.lastPeriodStartDate ?: LocalDate.now()
+                            android.app.DatePickerDialog(
+                                context,
+                                { _, year, month, dayOfMonth ->
+                                    val selected = LocalDate.of(year, month + 1, dayOfMonth)
+                                    viewModel.updateLastPeriodStartDate(selected)
+                                    Toast.makeText(context, "Last period start date updated! 🌸", Toast.LENGTH_SHORT).show()
+                                },
+                                current.year,
+                                current.monthValue - 1,
+                                current.dayOfMonth
+                            ).show()
+                        }
                     )
                 }
             }
@@ -912,6 +949,120 @@ fun MeScreen(
                 NiyuvaGhostButton(
                     text = "Cancel",
                     onClick = { showEditAgeDialog = false }
+                )
+            },
+            containerColor = WarmIvory,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    // Edit Cycle Length
+    if (showEditCycleDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditCycleDialog = false },
+            title = {
+                Text(
+                    text = "Average cycle length update karo",
+                    fontFamily = NunitoFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = DeepWarmBrown
+                )
+            },
+            text = {
+                Column {
+                    NiyuvaTextField(
+                        value = cycleInput,
+                        onValueChange = { cycleInput = it },
+                        placeholder = "Usually cycle kitne din ka hota hai...",
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Note: Standard cycle length 20 aur 45 din ke beech hoti hai 🌸",
+                        fontFamily = NunitoFamily,
+                        fontSize = 11.sp,
+                        color = DustyMauve,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                NiyuvaPrimaryButton(
+                    text = "Save",
+                    onClick = {
+                        val cycleInt = cycleInput.trim().toIntOrNull()
+                        if (cycleInt != null && cycleInt in 20..45) {
+                            viewModel.updateAverageCycleLength(cycleInt)
+                            showEditCycleDialog = false
+                        } else {
+                            Toast.makeText(context, "Cycle length 20 aur 45 din ke beech honi chahiye", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    enabled = cycleInput.trim().toIntOrNull() != null
+                )
+            },
+            dismissButton = {
+                NiyuvaGhostButton(
+                    text = "Cancel",
+                    onClick = { showEditCycleDialog = false }
+                )
+            },
+            containerColor = WarmIvory,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    // Edit Period Length
+    if (showEditPeriodDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditPeriodDialog = false },
+            title = {
+                Text(
+                    text = "Average period length update karo",
+                    fontFamily = NunitoFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = DeepWarmBrown
+                )
+            },
+            text = {
+                Column {
+                    NiyuvaTextField(
+                        value = periodInput,
+                        onValueChange = { periodInput = it },
+                        placeholder = "Period kitne din rehta hai...",
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Note: Standard period length 2 aur 10 din ke beech hoti hai 🌸",
+                        fontFamily = NunitoFamily,
+                        fontSize = 11.sp,
+                        color = DustyMauve,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                NiyuvaPrimaryButton(
+                    text = "Save",
+                    onClick = {
+                        val periodInt = periodInput.trim().toIntOrNull()
+                        if (periodInt != null && periodInt in 2..10) {
+                            viewModel.updateAveragePeriodLength(periodInt)
+                            showEditPeriodDialog = false
+                        } else {
+                            Toast.makeText(context, "Period length 2 aur 10 din ke beech honi chahiye", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    enabled = periodInput.trim().toIntOrNull() != null
+                )
+            },
+            dismissButton = {
+                NiyuvaGhostButton(
+                    text = "Cancel",
+                    onClick = { showEditPeriodDialog = false }
                 )
             },
             containerColor = WarmIvory,

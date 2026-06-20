@@ -25,24 +25,54 @@ class BuildDayStripUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         today: LocalDate = LocalDate.now(),
+        selectedDate: LocalDate = LocalDate.now(),
         defaultPeriodLength: Int = 5
     ): List<DayStripItem> {
         val startWindow = today.minusDays(3)
         val endWindow   = today.plusDays(3)
 
-        // Fetch all logs in the 7-day window in a single query
-        val logsInRange = dailyLogRepository.getLogsInRange(startWindow, endWindow)
-        val loggedDates = logsInRange.map { it.date }.toSet()
-
         // Fetch recent cycles to determine period days (last 3 cycles is sufficient)
         val recentCycles = cycleRepository.getRecentCycles(3)
 
+        // Fetch all logs from the start of the oldest cycle to endWindow
+        val oldestCycleStart = recentCycles.lastOrNull()?.startDate ?: startWindow
+        val logsInRange = dailyLogRepository.getLogsInRange(oldestCycleStart, endWindow)
+        val loggedDates = logsInRange.map { it.date }.toSet()
+        val logsMap = logsInRange.associateBy { it.date }
+
         return (0..6).map { offset ->
             val date = startWindow.plusDays(offset.toLong())
-            val isPeriodDay = recentCycles.any { cycle ->
-                val periodEnd = cycle.endDate
-                    ?: cycle.startDate.plusDays((defaultPeriodLength - 1).toLong())
-                !date.isBefore(cycle.startDate) && !date.isAfter(periodEnd)
+
+            // Find which cycle this date belongs to (the most recent cycle starting on or before date)
+            val activeCycle = recentCycles.firstOrNull { !date.isBefore(it.startDate) }
+
+            val isPeriodDay = if (activeCycle != null) {
+                // Find all logs belonging to this cycle on or before the current date
+                val cycleLogs = logsInRange.filter { it.date >= activeCycle.startDate && !it.date.isAfter(date) }
+
+                val defaultPeriodEnd = activeCycle.startDate.plusDays((defaultPeriodLength - 1).toLong())
+                val lastFlowLog = cycleLogs.lastOrNull { it.flowLevel != null }
+                val basePeriodEnd = if (lastFlowLog != null && lastFlowLog.date.isAfter(defaultPeriodEnd)) {
+                    lastFlowLog.date
+                } else {
+                    defaultPeriodEnd
+                }
+
+                val firstNoFlowLog = cycleLogs.firstOrNull { it.flowLevel == null }
+                val periodEnd = if (firstNoFlowLog != null && !firstNoFlowLog.date.isAfter(basePeriodEnd)) {
+                    firstNoFlowLog.date.minusDays(1)
+                } else {
+                    basePeriodEnd
+                }
+
+                val log = logsMap[date]
+                if (log != null) {
+                    log.flowLevel != null
+                } else {
+                    !date.isAfter(periodEnd)
+                }
+            } else {
+                false
             }
 
             DayStripItem(
@@ -52,7 +82,8 @@ class BuildDayStripUseCase @Inject constructor(
                 isToday     = date == today,
                 isLogged    = date in loggedDates,
                 isPeriodDay = isPeriodDay,
-                isFutureDay = date.isAfter(today)
+                isFutureDay = date.isAfter(today),
+                isSelected  = date == selectedDate
             )
         }
     }

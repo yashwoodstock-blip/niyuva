@@ -11,4 +11,5 @@ interface DailyLogRepository {
     fun getAllLogs(): Flow<List<DailyLog>>
     suspend fun getRecentLogs(count: Int): List<DailyLog>
     suspend fun getLogsInRange(start: LocalDate, end: LocalDate): List<DailyLog>
+    suspend fun getLogCount(): Int
 }

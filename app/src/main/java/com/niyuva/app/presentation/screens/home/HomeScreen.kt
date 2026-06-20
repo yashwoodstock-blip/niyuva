@@ -216,7 +216,7 @@ fun HomeScreen(
                     NiyuvaDayStrip(
                         days       = uiState.dayStrip,
                         phaseColor = uiState.phaseTheme.ringColor,
-                        onDayTapped = { /* Phase 15 will handle day tap navigation */ },
+                        onDayTapped = { date -> viewModel.selectDate(date) },
                         modifier   = Modifier.fillMaxWidth()
                     )
                 }
@@ -514,16 +514,17 @@ fun HomeScreen(
                 val showAiCard = uiState.aiEnabled && uiState.currentPhase != CyclePhase.MENSTRUATION
                 if (showAiCard) {
                     val isLuteal = uiState.currentPhase == CyclePhase.LUTEAL
+                    val hasSufficientData = uiState.loggedDaysCount >= 7
                     item(key = "ai_analysis_entry") {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
                                 .padding(top = if (isLuteal) 10.dp else 16.dp)
-                                .clickable {
+                                .clickable(enabled = hasSufficientData) {
                                     navController.navigate(NavRoutes.AnalysisResults.route)
                                 }
-                                .then(if (isLuteal) Modifier.alpha(0.8f) else Modifier),
+                                .then(if (isLuteal || !hasSufficientData) Modifier.alpha(0.8f) else Modifier),
                             shape = RoundedCornerShape(if (isLuteal) 14.dp else 20.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                             elevation = CardDefaults.cardElevation(defaultElevation = if (isLuteal) 1.dp else 2.dp)
@@ -532,28 +533,45 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(
-                                        brush = Brush.horizontalGradient(
-                                            colors = listOf(
-                                                Color(0xFFFFF0F5),
-                                                Color(0xFFFDE6D2)
+                                        brush = if (hasSufficientData) {
+                                            Brush.horizontalGradient(
+                                                colors = listOf(
+                                                    Color(0xFFFFF0F5),
+                                                    Color(0xFFFDE6D2)
+                                                )
                                             )
-                                        )
+                                        } else {
+                                            Brush.horizontalGradient(
+                                                colors = listOf(
+                                                    Color(0xFFF5F5F5),
+                                                    Color(0xFFE5E5E5)
+                                                )
+                                            )
+                                        }
                                     )
-                                    .border(1.dp, Color(0xFFEAD2C6), RoundedCornerShape(if (isLuteal) 14.dp else 20.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (hasSufficientData) Color(0xFFEAD2C6) else Color(0xFFDCDCDC),
+                                        shape = RoundedCornerShape(if (isLuteal) 14.dp else 20.dp)
+                                    )
                                     .padding(if (isLuteal) 12.dp else 20.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Apni Health Patterns Samjho ✨",
+                                        text = if (hasSufficientData) "Apni Health Patterns Samjho ✨" else "🔒 AI analysis unlock karo",
                                         fontFamily = NunitoFamily,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = if (isLuteal) 14.sp else 16.sp,
-                                        color = DeepWarmBrown
+                                        color = if (hasSufficientData) DeepWarmBrown else DustyMauve
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = "Cycles aur symptoms ke correlations ka AI analysis dekh lo 🧠",
+                                        text = if (hasSufficientData) {
+                                            "Cycles aur symptoms ke correlations ka AI analysis dekh lo 🧠"
+                                        } else {
+                                            "Apna trends data accurate dekhne ke liye kam se kam 7 din log karo (Abhi: ${uiState.loggedDaysCount}/7 din) 🌸"
+                                        },
                                         fontFamily = NunitoFamily,
                                         fontSize = if (isLuteal) 11.sp else 13.sp,
                                         color = DustyMauve,
@@ -562,7 +580,7 @@ fun HomeScreen(
                                 }
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = "⚡",
+                                    text = if (hasSufficientData) "⚡" else "🔒",
                                     fontSize = if (isLuteal) 22.sp else 28.sp
                                 )
                             }
@@ -886,7 +904,7 @@ fun KyaKhayenSection(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
                         .background(accentColor)
-                        .clickable { navController?.navigate(com.niyuva.app.presentation.navigation.NavRoutes.KyaKhayen.route) }
+                        .clickable { navController?.navigate(com.niyuva.app.presentation.navigation.NavRoutes.KyaKhayen.createRoute(phase.name.lowercase())) }
                         .padding(vertical = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {

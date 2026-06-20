@@ -10,7 +10,9 @@ import com.niyuva.app.data.remote.AiRepository
 import com.niyuva.app.domain.model.AiProvider
 import com.niyuva.app.domain.model.UserProfile
 import com.niyuva.app.domain.repository.UserProfileRepository
+import com.niyuva.app.domain.repository.CycleRepository
 import com.niyuva.app.domain.usecase.*
+import java.time.LocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -37,7 +39,9 @@ class MeViewModel @Inject constructor(
     private val preferences: NiyuvaPreferences,
     private val exportBackupUseCase: ExportBackupUseCase,
     private val restoreBackupUseCase: RestoreBackupUseCase,
-    private val deleteAllDataUseCase: DeleteAllDataUseCase
+    private val deleteAllDataUseCase: DeleteAllDataUseCase,
+    private val cycleRepository: CycleRepository,
+    private val scheduleAllNotificationsUseCase: ScheduleAllNotificationsUseCase
 ) : ViewModel() {
 
     val profile: StateFlow<UserProfile?> = getUserProfileUseCase()
@@ -228,6 +232,55 @@ class MeViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 onSuccess()
             }
+        }
+    }
+
+    fun updateAverageCycleLength(length: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentProfile = userProfileRepository.getProfile() ?: return@launch
+            userProfileRepository.saveProfile(currentProfile.copy(averageCycleLength = length))
+            
+            val latestCycle = cycleRepository.getLatestCycle()
+            if (latestCycle != null) {
+                cycleRepository.updateCycle(latestCycle.copy(cycleLength = length))
+            }
+            
+            runCatching { scheduleAllNotificationsUseCase() }
+        }
+    }
+
+    fun updateAveragePeriodLength(length: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentProfile = userProfileRepository.getProfile() ?: return@launch
+            userProfileRepository.saveProfile(currentProfile.copy(averagePeriodLength = length))
+            
+            val latestCycle = cycleRepository.getLatestCycle()
+            if (latestCycle != null) {
+                cycleRepository.updateCycle(latestCycle.copy(periodLength = length))
+            }
+            
+            runCatching { scheduleAllNotificationsUseCase() }
+        }
+    }
+
+    fun updateLastPeriodStartDate(date: LocalDate) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentProfile = userProfileRepository.getProfile() ?: return@launch
+            userProfileRepository.saveProfile(currentProfile.copy(lastPeriodStartDate = date))
+            
+            val latestCycle = cycleRepository.getLatestCycle()
+            if (latestCycle != null) {
+                cycleRepository.updateCycle(latestCycle.copy(startDate = date))
+            } else {
+                val newCycle = com.niyuva.app.domain.model.Cycle(
+                    startDate = date,
+                    cycleLength = currentProfile.averageCycleLength ?: 28,
+                    periodLength = currentProfile.averagePeriodLength ?: 5
+                )
+                cycleRepository.saveCycle(newCycle)
+            }
+            
+            runCatching { scheduleAllNotificationsUseCase() }
         }
     }
 }

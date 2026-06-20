@@ -21,6 +21,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.niyuva.app.presentation.components.NiyuvaBottomNav
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.niyuva.app.presentation.theme.CyclePhase
 import com.niyuva.app.presentation.navigation.NavRoutes
 import com.niyuva.app.presentation.screens.body.BodyScreen
 import com.niyuva.app.presentation.screens.discover.DiscoverScreen
@@ -56,7 +59,7 @@ fun MainScreen(
                                 currentRoute == NavRoutes.Analytics.route ||
                                 currentRoute == NavRoutes.CycleReport.route ||
                                 currentRoute == NavRoutes.AnalysisResults.route ||
-                                currentRoute == NavRoutes.KyaKhayen.route
+                                currentRoute?.startsWith("kya_khayen") == true
                             NavRoutes.Body.route ->
                                 currentRoute == NavRoutes.Body.route ||
                                 currentRoute?.startsWith("body_article") == true
@@ -124,9 +127,19 @@ fun MainScreen(
                 composable(NavRoutes.AnalysisResults.route) {
                     com.niyuva.app.presentation.screens.home.AnalysisResultsScreen(navController = navController)
                 }
-                composable(NavRoutes.KyaKhayen.route) {
+                composable(
+                    route = NavRoutes.KyaKhayen.route,
+                    arguments = listOf(navArgument("phase") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = "menstruation"
+                    })
+                ) { backStackEntry ->
+                    val phaseStr = backStackEntry.arguments?.getString("phase") ?: "menstruation"
+                    val phase = CyclePhase.entries.find { it.name.lowercase() == phaseStr.lowercase() } ?: CyclePhase.MENSTRUATION
                     com.niyuva.app.presentation.screens.home.KyaKhayenScreen(
                         navController = navController,
+                        initialPhase = phase,
                         modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                     )
                 }

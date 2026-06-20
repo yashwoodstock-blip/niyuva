@@ -34,7 +34,7 @@ fun NiyuvaTipCard(
 ) {
     val (cardBgColor, leftBorderColor) = when (tip.phase) {
         CyclePhase.MENSTRUATION -> Color(0xFFF2D5DC) to Color(0xFFC17A8A)
-        CyclePhase.FOLLICULAR   -> Color(0xFFFAE8D8) to Color(0xFFE8B89A)
+        CyclePhase.FOLLICULAR   -> Color(0xFFE1F5F2) to Color(0xFF76C4B4)
         CyclePhase.OVULATION    -> Color(0xFFD8EDD5) to Color(0xFFA8C5A0)
         CyclePhase.LUTEAL       -> Color(0xFFF0DFC0) to Color(0xFFD4A574)
     }

@@ -40,8 +40,8 @@ data class SaarthiUiState(
     val messages: List<ChatMessage> = emptyList(),
     val inputText: String = "",
     val isLoading: Boolean = false,  // Saarthi is generating response
-    val phase: CyclePhase = CyclePhase.MENSTRUATION,
-    val phaseTheme: PhaseThemeData = PhaseThemeData.fromPhase(CyclePhase.MENSTRUATION),
+    val phase: CyclePhase = CyclePhase.FOLLICULAR,
+    val phaseTheme: PhaseThemeData = PhaseThemeData.fromPhase(CyclePhase.FOLLICULAR),
     val userName: String = "",
     val hasConversation: Boolean = false,  // false = show empty state, true = show chat
     val error: String? = null,
@@ -84,9 +84,7 @@ class SaarthiViewModel @Inject constructor(
                 is PhaseResult.Known -> phaseResult.phase
                 else -> CyclePhase.FOLLICULAR
             }
-            // ORIGINAL LOGIC (color changes according to cycle day):
-            // val phaseTheme = PhaseThemeData.fromPhase(phase)
-            val phaseTheme = PhaseThemeData.fromPhase(CyclePhase.MENSTRUATION)
+            val phaseTheme = PhaseThemeData.fromPhase(phase)
 
             // 3. Observe chat history
             getAllChatMessagesUseCase().collect { messages ->

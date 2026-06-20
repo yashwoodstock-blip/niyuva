@@ -13,12 +13,12 @@ import java.time.LocalDate
 data class HomeUiState(
     val isLoading: Boolean = true,
     val userName: String = "",
-    val currentPhase: CyclePhase = CyclePhase.MENSTRUATION,
+    val currentPhase: CyclePhase = CyclePhase.FOLLICULAR,
     val currentDayInCycle: Int = 1,
     val dayInPhase: Int = 1,
     val totalCycleDays: Int = 28,
     /** Resolved from CyclePhase via PhaseThemeData.fromPhase() — drives all theming. */
-    val phaseTheme: PhaseThemeData = PhaseThemeData.MENSTRUATION,
+    val phaseTheme: PhaseThemeData = PhaseThemeData.FOLLICULAR,
     val prediction: CyclePrediction? = null,
     val todayLog: DailyLog? = null,
     val hasLoggedToday: Boolean = false,
@@ -36,7 +36,9 @@ data class HomeUiState(
     val confidenceLevel: com.niyuva.app.domain.model.ConfidenceLevel = com.niyuva.app.domain.model.ConfidenceLevel.ESTIMATED,
     val irregularityFlag: Boolean = false,
     val isSnapshotRowExpanded: Boolean = false,
-    val showRecoveryPromptCard: Boolean = false
+    val showRecoveryPromptCard: Boolean = false,
+    val loggedDaysCount: Int = 0,
+    val selectedDate: LocalDate = LocalDate.now()
 )
 
 // ─────────────────────────────────────────────
@@ -51,7 +53,8 @@ data class DayStripItem(
     val isToday: Boolean,
     val isLogged: Boolean,
     val isPeriodDay: Boolean,
-    val isFutureDay: Boolean
+    val isFutureDay: Boolean,
+    val isSelected: Boolean = false
 )
 
 // ─────────────────────────────────────────────

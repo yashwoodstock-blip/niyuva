@@ -85,8 +85,12 @@ private val phaseTabs = listOf(
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
-fun KyaKhayenScreen(navController: NavController, modifier: Modifier = Modifier) {
-    var selectedPhase by rememberSaveable { mutableStateOf(CyclePhase.MENSTRUATION) }
+fun KyaKhayenScreen(
+    navController: NavController,
+    initialPhase: CyclePhase = CyclePhase.MENSTRUATION,
+    modifier: Modifier = Modifier
+) {
+    var selectedPhase by rememberSaveable(inputs = arrayOf(initialPhase)) { mutableStateOf(initialPhase) }
     val data = remember(selectedPhase) { KyaKhayenData.forPhase(selectedPhase) }
     val accentColor = remember(data.accentColorHex) {
         Color(android.graphics.Color.parseColor(data.accentColorHex))

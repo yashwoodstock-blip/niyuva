@@ -112,7 +112,7 @@ fun NiyuvaBottomNav(
             ) {
                 tabs.forEach { tab ->
                     val selected = when (tab.route) {
-                        NavRoutes.Home.route -> currentRoute == NavRoutes.Home.route || currentRoute == NavRoutes.Analytics.route || currentRoute == NavRoutes.CycleReport.route || currentRoute == NavRoutes.AnalysisResults.route || currentRoute == NavRoutes.KyaKhayen.route
+                        NavRoutes.Home.route -> currentRoute == NavRoutes.Home.route || currentRoute == NavRoutes.Analytics.route || currentRoute == NavRoutes.CycleReport.route || currentRoute == NavRoutes.AnalysisResults.route || currentRoute?.startsWith("kya_khayen") == true
                         NavRoutes.Body.route -> currentRoute == NavRoutes.Body.route || currentRoute?.startsWith("body_article") == true
                         NavRoutes.Discover.route -> currentRoute == NavRoutes.Discover.route || currentRoute == NavRoutes.PehliBaarStories.route || currentRoute?.startsWith("theme_stories") == true || currentRoute?.startsWith("vedic_section") == true
                         else -> currentRoute == tab.route

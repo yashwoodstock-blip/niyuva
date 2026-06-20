@@ -2,6 +2,7 @@ package com.niyuva.app.domain.usecase
 
 import com.niyuva.app.domain.repository.CycleRepository
 import com.niyuva.app.domain.repository.UserProfileRepository
+import com.niyuva.app.domain.repository.DailyLogRepository
 import com.niyuva.app.presentation.theme.CyclePhase
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -42,28 +43,57 @@ sealed class PhaseResult {
  */
 class GetCurrentPhaseUseCase @Inject constructor(
     private val cycleRepository: CycleRepository,
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val dailyLogRepository: DailyLogRepository
 ) {
-    suspend operator fun invoke(): PhaseResult {
+    suspend operator fun invoke(date: LocalDate = LocalDate.now()): PhaseResult {
         val profile = userProfileRepository.getProfile() ?: return PhaseResult.Unknown
         val latestCycle = cycleRepository.getLatestCycle() ?: return PhaseResult.Unknown
 
-        val today = LocalDate.now()
         val startDate = latestCycle.startDate
         val cycleLength = profile.averageCycleLength ?: 28
         val periodLength = profile.averagePeriodLength ?: 5
 
         // Days since cycle start (1-indexed)
-        val dayInCycle = ChronoUnit.DAYS.between(startDate, today).toInt() + 1
+        val dayInCycle = ChronoUnit.DAYS.between(startDate, date).toInt() + 1
 
         // Guard: negative day means the cycle date is in the future — data inconsistency
         if (dayInCycle < 1) return PhaseResult.Unknown
 
+        // Find all logs in this cycle up to date
+        val logsInCycle = dailyLogRepository.getLogsInRange(startDate, date)
+
+        // 1. Calculate default predicted period end
+        val defaultPeriodEnd = startDate.plusDays((periodLength - 1).toLong())
+
+        // 2. Extend period end to the latest logged flow if it falls past defaultPeriodEnd
+        val lastFlowLog = logsInCycle.lastOrNull { it.flowLevel != null }
+        val basePeriodEnd = if (lastFlowLog != null && lastFlowLog.date.isAfter(defaultPeriodEnd)) {
+            lastFlowLog.date
+        } else {
+            defaultPeriodEnd
+        }
+
+        // 3. Shorten period end if there is a no-flow log on or before basePeriodEnd
+        val firstNoFlowLog = logsInCycle.firstOrNull { it.flowLevel == null }
+        val periodEnd = if (firstNoFlowLog != null && !firstNoFlowLog.date.isAfter(basePeriodEnd)) {
+            firstNoFlowLog.date.minusDays(1)
+        } else {
+            basePeriodEnd
+        }
+
+        val dateLog = dailyLogRepository.getLogForDate(date)
+        val isMenstruating = if (dateLog != null) {
+            dateLog.flowLevel != null
+        } else {
+            !date.isAfter(periodEnd)
+        }
+
         val phase = when {
-            dayInCycle <= periodLength  -> CyclePhase.MENSTRUATION
-            dayInCycle <= 13            -> CyclePhase.FOLLICULAR
-            dayInCycle <= 16            -> CyclePhase.OVULATION
-            else                        -> CyclePhase.LUTEAL
+            isMenstruating   -> CyclePhase.MENSTRUATION
+            dayInCycle <= 13 -> CyclePhase.FOLLICULAR
+            dayInCycle <= 16 -> CyclePhase.OVULATION
+            else             -> CyclePhase.LUTEAL
         }
 
         return PhaseResult.Known(
